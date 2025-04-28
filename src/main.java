@@ -5,11 +5,11 @@ import java.awt.*; //i dont know if all of awt is necessary here but wtv
 //rain %chance/temp = raindrop width, color (higher chance means brighten and desaturate)
 //rain %chance = raindrop particle intensity
 //temperature = white balance
-//time of day = saturation, contrast
+//time of day = saturation, brightness
 //wind speed = rain particle angle and speed
 
-public static saturation_mod(Color col, float saturation) {
-    //convert to hsv, modify s, convert back to srgb
+public static saturation_brightness_mod(Color col, float saturation, float brightness) { //todo: get brightness from time
+    //convert to hsl, modify s and l, convert back to srgb
 }
 
 public static float get_angle_from(int speed) {
@@ -51,6 +51,7 @@ public class JSONdata {
     public int precipChance;
     public int rainTempValue;
     public int windSpeed;
+    public int time;
 }
 
 public static RaindropParticle[] generate_raindrops(JSONdata data) {
