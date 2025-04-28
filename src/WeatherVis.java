@@ -1,5 +1,4 @@
-import javax.json.stream;
-import javax.imageio;
+import javax.imageio.*;
 import java.awt.*; //i dont know if all of awt is necessary here but wtv
 
 //rain %chance/temp = raindrop width, color (higher chance means brighten and desaturate)
@@ -7,7 +6,7 @@ import java.awt.*; //i dont know if all of awt is necessary here but wtv
 //temperature = white balance
 //time of day = saturation, contrast
 //wind speed = rain particle angle and speed
-public class Main {
+public class WeatherVis {
     public static void saturation_mod(Color col, float saturation) {
         //convert to hsv, modify s, convert back to srgb
     }
