@@ -29,6 +29,11 @@ public class WeatherVis {
         return speed/2.0f;
     }
 
+    public static Image tint_image(Image image, int temp) {
+        //iterate over each pixel of the image and tinting it based on temp
+        
+    }
+
     public static Color color_balance_approx(Color col, int temp) {
         int red = (1.5 * temp) + 100;
         if(red > 150) {
