@@ -4,7 +4,7 @@ import java.net.spi.URLStreamHandlerProvider;
 import java.io.*;
 import jakarta.json.*;
 import jakarta.json.stream.*;
-import java.awt.*;
+import java.awt.color.*;
 import javax.swing.*;
 import java.nio.charset.StandardCharsets;
 
@@ -14,18 +14,36 @@ import java.nio.charset.StandardCharsets;
 //time of day = saturation, contrast
 //wind speed = rain particle angle and speed
 public class WeatherVis {
-    public static void saturation_mod(Color col, float saturation) {
+    public static Color saturation_mod(Color col, float saturation) {
         //convert to hsv, modify s, convert back to srgb
+        float[] comp = new float[3];
+        Color.RGBtoHSB(col.r, col.g, col.b, comp);
+        comp[1] = saturation;
+        Color out = new Color(Color.HSBtoRGB(comp[0], comp[1], comp[2]));
+        return out;
+        //probably a couple things wrong with this but i'm currently not able to test lol
     }
 
     public static float get_angle_from(int speed) {
         //arbitrarily decide raindrop angle from wind speed
-        return 0.0f;
+        return speed/2.0f;
     }
 
-    public static Color white_balance(Color col, int temp) {
-        //do white balance on col and return the white balanced Color object
-        return Color.WHITE;
+    public static Color color_balance_approx(Color col, int temp) {
+        int red = (1.5 * temp) + 100;
+        if(red > 150) {
+            red = 150;
+        }
+        int green = (1.5 * temp) + 100;
+        if(green > 150) {
+            green = 150;
+        }
+        int blue = 255/(5/temp)
+        if(blue > 255) {
+            blue = 255;
+        }
+        Color out = Color(red, green, blue, 50, true);
+        return out;
     }
 
     public class RaindropParticle {
