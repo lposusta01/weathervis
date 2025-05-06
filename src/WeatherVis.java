@@ -6,7 +6,12 @@ import jakarta.json.*;
 import jakarta.json.stream.*;
 import java.awt.*;
 import javax.swing.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.nio.charset.StandardCharsets;
 
 //rain %chance/temp = raindrop width, color (higher chance means brighten and desaturate)
@@ -100,40 +105,87 @@ public class WeatherVis {
 
     }
 
-    public String generate_json_data(String input) throws IOException {
-        //todo: depending on the time of day, we should wait until the startTime and day of the week matches the system date/time
-        LocalDateTime time = LocalDateTime.now();
+    public JSONdata generate_json_data(String input) throws IOException {
         int temp = 0;
         int windSpeed = 0;
         int precipChance = 0;
-        JSONdata out = new JSONdata(temp, windSpeed, precipChance);
         InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
         JsonParser parser = Json.createParser(inputStream);
+        boolean startTimeCorrect = false;
+        boolean endTimeCorrect = false; //def a more efficient way to do this
 
         while(parser.hasNext()) {
+            boolean read = startTimeCorrect && endTimeCorrect;
             switch(parser.next()) {
                 case JsonParser.Event.KEY_NAME:
-                    System.out.println(parser.getString());
+                    //System.out.println(parser.getString());
                     switch(parser.getString()) {
-                        case "name":
-                            switch(parser.next()) {
-                                case JsonParser.Event.VALUE_STRING:
-                                    
-                                default:
-                                    break;
+                        case "startTime":
+                            if(parser.next() == JsonParser.Event.VALUE_STRING) {
+                                if(LocalDateTime.parse(parser.getString(), DateTimeFormatter.ISO_DATE_TIME).isBefore(LocalDateTime.now())) {
+                                    startTimeCorrect = true;
+                                } else {
+                                    startTimeCorrect = false;
+                                }
+                            } else {
+                                System.err.println("API error: field \"startTime\" has no value");
                             }
                             break;
+                        case "endTime":
+                            if(parser.next() == JsonParser.Event.VALUE_STRING) {
+                                if(LocalDateTime.parse(parser.getString(), DateTimeFormatter.ISO_DATE_TIME).isAfter(LocalDateTime.now())) { //TODO: handle edge case of exactly the same times
+                                    //todo: parse() error handling
+                                    endTimeCorrect = true;
+                                } else {
+                                    endTimeCorrect = false;
+                                }
+                            } else {
+                                System.err.println("API error: field \"endTime\" has no value");
+                            }
                         case "temperature":
+                            if(read == true) {
+                                if(parser.next() == JsonParser.Event.VALUE_NUMBER) {
+                                    temp = parser.getInt();
+                                } else {
+                                    System.err.println("API error: field \"temperature\" has no value");
+                                }
+                            } else {
+                                System.out.println("no read permitted");
+                                break;
+                            }
                         case "windSpeed":
+                            if(read == true) {
+                                if(parser.next() == JsonParser.Event.VALUE_NUMBER) { //FIXME: GGHIUHRKJHKJR WHY IS IT A STRING. WHY WHY WHY WHY WHY W
+                                    windSpeed = parser.getInt();
+                                } else {
+                                    System.err.println("API error: field \"windSpeed\" has no value");
+                                }
+                            } else {
+                                System.out.println("no read permitted");
+                                break;
+                            }
                         case "probabilityOfPrecipitation":
-                        case "startTime":
+                            if(read == true) {
+                                if(parser.next() == JsonParser.Event.VALUE_NUMBER) { //FIXME: its an OBJECT not a NUMBER you DINGUS
+                                    precipChance = parser.getInt();
+                                } else {
+                                    System.err.println("API error: field \"probabilityOfPrecipitation\" has no value");
+                                }
+                            } else {
+                                System.out.println("no read permitted");
+                                break;
+                            }
                     }
                     break;
                 default:
                     break;
             }
         }
-        return "test";
+        JSONdata out = new JSONdata(temp, windSpeed, precipChance);
+        System.out.println(temp);
+        System.out.println(windSpeed);
+        System.out.println(precipChance);
+        return out;
     }
     
 
@@ -174,6 +226,7 @@ public class WeatherVis {
         WeatherVis self = new WeatherVis();//this is scuffed
         //JSONdata data = self.generate_json_data(test); //OOP moment
         //System.out.println("");
-        System.out.println(self.generate_json_data(test));
+        System.out.println(self.generate_json_data(test).toString());
+        System.out.println(LocalDateTime.now());
     }
 }
