@@ -1,3 +1,4 @@
+//TODO: MASSIVE MASSIVE MASSIVE TO-DO: GET THIS TO COMPILE ON ANOTHER MACHINE. JUST ONE. PLEASE GOD
 import javax.imageio.*;
 import java.net.*;
 import java.net.spi.URLStreamHandlerProvider;
