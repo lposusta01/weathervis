@@ -1,3 +1,13 @@
+/*
+*   copyright Elizabeth Posusta 2025
+*
+*   WeatherVis.java ("This Software") is provided for free and without a warranty. 
+*   This Software may be redistributed freely, under the sole condition 
+*   that this disclaimer and the above copyright statement both remain 
+*   unmodified and are not removed from redistributed and future versions of this software
+*   without explicit permission of the creator and copyright holder (Elizabeth Posusta).
+*/
+
 //TODO: compile sans VSCode convenience
 import javax.imageio.*;
 import jakarta.json.*;
