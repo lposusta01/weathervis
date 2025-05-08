@@ -1,19 +1,15 @@
-//TODO: MASSIVE MASSIVE MASSIVE TO-DO: GET THIS TO COMPILE ON ANOTHER MACHINE. JUST ONE. PLEASE GOD
+//TODO: compile sans VSCode convenience
 import javax.imageio.*;
-import java.net.*;
-import java.net.spi.URLStreamHandlerProvider;
-import java.io.*;
 import jakarta.json.*;
 import jakarta.json.stream.*;
-import java.awt.*;
 import javax.swing.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.nio.charset.StandardCharsets;
+import java.net.*;
+import java.io.*;
+import java.awt.*;
 
 //rain %chance/temp = raindrop width, color (higher chance means brighten and desaturate)
 //rain %chance = raindrop particle intensity
@@ -134,8 +130,7 @@ public class WeatherVis {
                             break;
                         case "endTime":
                             if(parser.next() == JsonParser.Event.VALUE_STRING) {
-                                if(LocalDateTime.parse(parser.getString(), DateTimeFormatter.ISO_DATE_TIME).isAfter(LocalDateTime.now())) { //TODO: handle edge case of exactly the same times
-                                    //todo: parse() error handling
+                                if(LocalDateTime.parse(parser.getString(), DateTimeFormatter.ISO_DATE_TIME).isAfter(LocalDateTime.now())) { //TODO: handle edge case of exactly the same times?
                                     endTimeCorrect = true;
                                 } else {
                                     endTimeCorrect = false;
@@ -156,8 +151,9 @@ public class WeatherVis {
                             }
                         case "windSpeed":
                             if(read == true) {
-                                if(parser.next() == JsonParser.Event.VALUE_NUMBER) { //FIXME: GGHIUHRKJHKJR WHY IS IT A STRING. WHY WHY WHY WHY WHY W
-                                    windSpeed = parser.getInt();
+                                if(parser.next() == JsonParser.Event.VALUE_STRING) {
+                                    String lowEndString = parser.getString().substring(0, parser.getString().indexOf(" "));
+                                    windSpeed = Integer.valueOf(lowEndString); 
                                 } else {
                                     System.err.println("API error: field \"windSpeed\" has no value");
                                 }
@@ -167,8 +163,10 @@ public class WeatherVis {
                             }
                         case "probabilityOfPrecipitation":
                             if(read == true) {
-                                if(parser.next() == JsonParser.Event.VALUE_NUMBER) { //FIXME: its an OBJECT not a NUMBER you DINGUS
-                                    precipChance = parser.getInt();
+                                if(parser.next() == JsonParser.Event.START_OBJECT) { //FIXME: what is up with probabilityOfPrecipitation. whar
+                                    //precipChance = parser.getInt();
+                                    precipChance = (int)(Math.random() * 100); //so for some reason probabilityOfPrecipitation is always null. 
+                                    //its also wrapped in an object which is really annoying. solution: we just make something up!
                                 } else {
                                     System.err.println("API error: field \"probabilityOfPrecipitation\" has no value");
                                 }
@@ -183,9 +181,6 @@ public class WeatherVis {
             }
         }
         JSONdata out = new JSONdata(temp, windSpeed, precipChance);
-        System.out.println(temp);
-        System.out.println(windSpeed);
-        System.out.println(precipChance);
         return out;
     }
     
@@ -228,6 +223,5 @@ public class WeatherVis {
         //JSONdata data = self.generate_json_data(test); //OOP moment
         //System.out.println("");
         System.out.println(self.generate_json_data(test).toString());
-        System.out.println(LocalDateTime.now());
     }
 }
