@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.net.*;
 import java.io.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 //rain %chance/temp = raindrop width, color (higher chance means brighten and desaturate)
 //rain %chance = raindrop particle intensity
@@ -223,8 +224,19 @@ public class WeatherVis {
         }
     }
 
-    public static void windowInit(Image image) {
-
+    public static void windowInit() throws IOException {
+        File imageFile = new File("C:\\Users\\lposusta01\\Desktop\\img.png");
+        BufferedImage image = ImageIO.read(imageFile);
+        JFrame frame = new JFrame();
+        frame.setBounds(0, 0, image.getWidth(frame), image.getHeight(frame));
+        frame.setResizable(false);
+        frame.setVisible(true);
+        JPanel panel = new JPanel(true);
+        Graphics g = frame.getGraphics();
+        g.drawImage(image, 0, 0, null);
+        panel.paintComponents(g);
+        frame.add(panel);
+        frame.paintComponents(g);
     }
 
     public static void main(String[] args) throws IOException {
@@ -234,5 +246,6 @@ public class WeatherVis {
         //JSONdata data = self.generate_json_data(test); //OOP moment
         //System.out.println("");
         System.out.println(self.generate_json_data(test).toString());
+        windowInit();
     }
 }
